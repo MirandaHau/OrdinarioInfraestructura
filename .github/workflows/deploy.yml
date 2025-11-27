@@ -1,0 +1,36 @@
+name: Deploy Python API to Azure
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure Container Registry Login
+      uses: azure/docker-login@v1
+      with:
+        login-server: mirandaacr.azurecr.io
+        username: ${{ secrets.AZURECR_USERNAME }}
+        password: ${{ secrets.AZURECR_PASSWORD }}
+
+    - name: Build and Push Docker image
+      run: |
+        docker build -t mirandaacr.azurecr.io/miapi:latest .
+        docker push mirandaacr.azurecr.io/miapi:latest
+
+    - name: Deploy to Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: mirandaapiweb
+        images: mirandaacr.azurecr.io/miapi:latest

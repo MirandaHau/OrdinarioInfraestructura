@@ -12,11 +12,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # 🔐 Login a Azure con el secreto AZURE_CREDENTIALS
     - name: Login to Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    # 🔐 Login al Azure Container Registry
     - name: Azure Container Registry Login
       uses: azure/docker-login@v1
       with:
@@ -24,11 +26,13 @@ jobs:
         username: ${{ secrets.AZURECR_USERNAME }}
         password: ${{ secrets.AZURECR_PASSWORD }}
 
+    # 🏗️ Construcción y envío de la imagen
     - name: Build and Push Docker image
       run: |
         docker build -t mirandaacr.azurecr.io/miapi:latest .
         docker push mirandaacr.azurecr.io/miapi:latest
 
+    # 🚀 Despliegue a Azure Web App (contenedores)
     - name: Deploy to Web App
       uses: azure/webapps-deploy@v2
       with:

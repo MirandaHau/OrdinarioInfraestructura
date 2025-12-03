@@ -26,7 +26,7 @@ def create_app():
     # Manejadores personalizados de JWT
     @jwt.unauthorized_loader
     def custom_unauthorized_response(err_str):
-        return jsonify({"error": "Te falta el token perdedor jajaja."}), 401
+        return jsonify({"error": "Te hace falta el token :( )"}), 401
 
     # Registrar los blueprints existentes
     app.register_blueprint(usuarios_bp, url_prefix='/usuarios')

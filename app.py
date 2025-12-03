@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 import os
 from dotenv import load_dotenv
 from config.db import init_db, mysql
@@ -22,6 +22,11 @@ def create_app():
     # Configuración de JWT
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET')
     jwt = JWTManager(app)
+
+    # Manejadores personalizados de JWT
+    @jwt.unauthorized_loader
+    def custom_unauthorized_response(err_str):
+        return jsonify({"error": "Te falta el token perdedor jajaja."}), 401
 
     # Registrar los blueprints existentes
     app.register_blueprint(usuarios_bp, url_prefix='/usuarios')
